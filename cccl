@@ -121,6 +121,23 @@ EOF
         clopt+=("${slash}O2")
         ;;
 
+    /link | -link)
+        # Same behaviour as cl - all options after /link are linker options
+        shift
+        while test $# -gt 0; do
+            case "$1" in
+            /*)
+                linkopt+=("${slash}${1:1}")
+                ;;
+
+            *)
+                linkopt+=("$1")
+                ;;
+            esac
+            shift
+        done
+        ;;
+        
     -L*)
         path=`echo "$1" | sed 's/-L//'`
         linkopt+=("${slash}LIBPATH:$path")
@@ -204,23 +221,6 @@ EOF
         # C++ source file with non .cpp extension, make sure cl understand 
         # that it is C++
         clopt+=("${slash}Tp$1")
-        ;;
-
-    /link)
-        # Same behaviour as cl - all options after /link are linker options
-        shift
-        while test $# -gt 0; do
-            case "$1" in
-            /*)
-                linkopt+=("${slash}${1:1}")
-                ;;
-
-            *)
-                linkopt+=("$1")
-                ;;
-            esac
-            shift
-        done
         ;;
 
     /*)
